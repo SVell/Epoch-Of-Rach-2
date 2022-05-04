@@ -40,6 +40,7 @@ namespace SVell
 			moveDirection = camera.forward * inputHandler.Vertical;
 			moveDirection += camera.right * inputHandler.Horizontal;
 			moveDirection.Normalize();
+			moveDirection.y = 0;
 
 			float speed = movementSpeed;
 			moveDirection *= speed;

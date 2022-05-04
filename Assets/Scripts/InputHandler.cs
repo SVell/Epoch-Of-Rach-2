@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace SVell 
@@ -11,6 +12,7 @@ namespace SVell
 		[SerializeField] private float mouseY;
 
 		private PlayerControls inputActions;
+		private CameraHandler cameraHandler;
 
 		private Vector2 movementInput;
 		private Vector2 cameraInput;
@@ -18,6 +20,8 @@ namespace SVell
 		public float Horizontal => horizontal;
 		public float Vertical => vertical;
 		public float MoveAmount => moveAmount;
+
+		
 
 		public void OnEnable()
 		{
@@ -33,6 +37,22 @@ namespace SVell
 		private void OnDisable()
 		{
 			inputActions.Disable();
+		}
+		
+		private void Start()
+		{
+			cameraHandler = CameraHandler.Instance;
+		}
+
+		private void FixedUpdate()
+		{
+			float delta = Time.fixedDeltaTime;
+
+			if (cameraHandler != null)
+			{
+				cameraHandler.FollowTarget(delta);
+				cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
+			}
 		}
 
 		public void TickInput(float delta)
