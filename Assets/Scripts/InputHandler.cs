@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace SVell 
 {
@@ -11,6 +11,10 @@ namespace SVell
 		[SerializeField] private float mouseX;
 		[SerializeField] private float mouseY;
 
+		[SerializeField] private bool bInput;
+		[SerializeField] private bool rollFlag;
+		[SerializeField] private bool isInteracting;
+
 		private PlayerControls inputActions;
 		private CameraHandler cameraHandler;
 
@@ -20,6 +24,18 @@ namespace SVell
 		public float Horizontal => horizontal;
 		public float Vertical => vertical;
 		public float MoveAmount => moveAmount;
+
+		public bool RollFlag
+		{
+			get => rollFlag;
+			set => rollFlag = value;
+		}
+
+		public bool IsInteracting
+		{
+			get => isInteracting;
+			set => isInteracting = value;
+		}
 
 		
 
@@ -58,6 +74,7 @@ namespace SVell
 		public void TickInput(float delta)
 		{
 			MoveInput(delta);
+			HandleRollingInput(delta);
 		}
 
 		private void MoveInput(float delta)
@@ -68,6 +85,16 @@ namespace SVell
 			
 			mouseX = cameraInput.x;
 			mouseY = cameraInput.y;
+		}
+
+		private void HandleRollingInput(float delta)
+		{
+			bInput = inputActions.PlayerActions.Roll.phase == InputActionPhase.Performed;
+			
+			if (bInput)
+			{
+				rollFlag = true;
+			}
 		}
 	}
 }
