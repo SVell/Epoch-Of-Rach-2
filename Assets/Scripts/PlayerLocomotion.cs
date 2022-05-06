@@ -7,6 +7,7 @@ namespace SVell
 	{
 		[Header("Stats")] 
 		[SerializeField] private float movementSpeed = 5f;
+		[SerializeField] private float sprintSpeed = 7f;
 		[SerializeField] private float rotationSpeed = 10f;
 		
 		private InputHandler inputHandler;
@@ -20,6 +21,7 @@ namespace SVell
 
 		public Transform MyTransform => transform;
 		public Rigidbody Rigidbody => rigidbody;
+		public bool IsSprinting { get; set; }
 
 		private void Awake()
 		{
@@ -35,7 +37,8 @@ namespace SVell
 		public void Update()
 		{
 			float delta = Time.deltaTime;
-			
+
+			IsSprinting = inputHandler.bInput;
 			inputHandler.TickInput(delta);
 			HandleMovement(delta);
 			HandleRollingAndSprint(delta);
@@ -72,18 +75,30 @@ namespace SVell
 
 		private void HandleMovement(float delta)
 		{
+			if(inputHandler.RollFlag) return;
+			
 			moveDirection = camera.forward * inputHandler.Vertical;
 			moveDirection += camera.right * inputHandler.Horizontal;
 			moveDirection.Normalize();
 			moveDirection.y = 0;
 
 			float speed = movementSpeed;
-			moveDirection *= speed;
+
+			if (inputHandler.SprintFlag)
+			{
+				speed = sprintSpeed;
+				IsSprinting = true;
+				moveDirection *= speed;
+			}
+			else
+			{
+				moveDirection *= speed;
+			}
 
 			Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
 			rigidbody.velocity = projectedVelocity;
 
-			animatorHandler.UpdateAnimatorValues(inputHandler.MoveAmount, 0);
+			animatorHandler.UpdateAnimatorValues(inputHandler.MoveAmount, 0, IsSprinting );
 
 			if (animatorHandler.CanRotate)
 			{

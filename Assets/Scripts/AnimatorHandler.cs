@@ -25,7 +25,7 @@ namespace SVell
 			horizontal = Animator.StringToHash("Horizontal");
 		}
 
-		public void UpdateAnimatorValues(float vertiacalMovement, float horizontalMovement)
+		public void UpdateAnimatorValues(float vertiacalMovement, float horizontalMovement, bool isSprinting)
 		{
 			#region Vertical
 			float v = 0;
@@ -76,6 +76,12 @@ namespace SVell
 				h = 0;
 			}
 			#endregion
+
+			if (isSprinting)
+			{
+				v = 2;
+				h = horizontalMovement;
+			}
 			
 			animator.SetFloat(vertical, v, 0.1f, Time.deltaTime);
 			animator.SetFloat(horizontal, h, 0.1f, Time.deltaTime);

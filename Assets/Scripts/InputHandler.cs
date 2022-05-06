@@ -11,8 +11,10 @@ namespace SVell
 		[SerializeField] private float mouseX;
 		[SerializeField] private float mouseY;
 
-		[SerializeField] private bool bInput;
+		public bool bInput { get; set; }
 		[SerializeField] private bool rollFlag;
+		[SerializeField] private float rollInputTimer;
+		public bool SprintFlag { get; set; }
 		[SerializeField] private bool isInteracting;
 
 		private PlayerControls inputActions;
@@ -93,7 +95,18 @@ namespace SVell
 			
 			if (bInput)
 			{
-				rollFlag = true;
+				rollInputTimer += delta;
+				SprintFlag = true;
+			}
+			else
+			{
+				if (rollInputTimer > 0 && rollInputTimer < 0.5f)
+				{
+					SprintFlag = false;
+					rollFlag = false;
+				}
+
+				rollInputTimer = 0;
 			}
 		}
 	}

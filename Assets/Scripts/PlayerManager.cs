@@ -17,6 +17,7 @@ namespace SVell
 		{
 			inputHandler.IsInteracting = animator.GetBool("IsInteracting");
 			inputHandler.RollFlag = false;
+			inputHandler.SprintFlag = false;
 		}
 	}
 }
