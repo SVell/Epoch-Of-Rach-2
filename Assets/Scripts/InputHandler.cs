@@ -5,41 +5,29 @@ namespace SVell
 {
 	public class InputHandler : MonoBehaviour
 	{
-		[SerializeField] private float horizontal;
-		[SerializeField] private float vertical;
-		[SerializeField] private float moveAmount;
-		[SerializeField] private float mouseX;
-		[SerializeField] private float mouseY;
-
-		public bool bInput { get; set; }
-		[SerializeField] private bool rollFlag;
-		[SerializeField] private float rollInputTimer;
-		public bool SprintFlag { get; set; }
-		[SerializeField] private bool isInteracting;
-
 		private PlayerControls inputActions;
-		private CameraHandler cameraHandler;
 
 		private Vector2 movementInput;
 		private Vector2 cameraInput;
 
+		private float horizontal;
+		private float vertical;
+		private float moveAmount;
+		private float mouseX;
+		private float mouseY;
+
+		private float rollInputTimer;
+		
+		public bool SprintFlag { get; set; }
+		public bool BInput { get; set; }
+		public bool RollFlag { get; set; }
+
 		public float Horizontal => horizontal;
 		public float Vertical => vertical;
 		public float MoveAmount => moveAmount;
+		public float MouseX => mouseX;
+		public float MouseY => mouseY;
 
-		public bool RollFlag
-		{
-			get => rollFlag;
-			set => rollFlag = value;
-		}
-
-		public bool IsInteracting
-		{
-			get => isInteracting;
-			set => isInteracting = value;
-		}
-
-		
 
 		public void OnEnable()
 		{
@@ -57,22 +45,6 @@ namespace SVell
 			inputActions.Disable();
 		}
 		
-		private void Start()
-		{
-			cameraHandler = CameraHandler.Instance;
-		}
-
-		private void FixedUpdate()
-		{
-			float delta = Time.fixedDeltaTime;
-
-			if (cameraHandler != null)
-			{
-				cameraHandler.FollowTarget(delta);
-				cameraHandler.HandleCameraRotation(delta, mouseX, mouseY);
-			}
-		}
-
 		public void TickInput(float delta)
 		{
 			MoveInput(delta);
@@ -91,9 +63,9 @@ namespace SVell
 
 		private void HandleRollingInput(float delta)
 		{
-			bInput = inputActions.PlayerActions.Roll.phase == InputActionPhase.Performed;
+			BInput = inputActions.PlayerActions.Roll.phase == InputActionPhase.Performed;
 			
-			if (bInput)
+			if (BInput)
 			{
 				rollInputTimer += delta;
 				SprintFlag = true;
@@ -103,7 +75,7 @@ namespace SVell
 				if (rollInputTimer > 0 && rollInputTimer < 0.5f)
 				{
 					SprintFlag = false;
-					rollFlag = false;
+					RollFlag = true;
 				}
 
 				rollInputTimer = 0;

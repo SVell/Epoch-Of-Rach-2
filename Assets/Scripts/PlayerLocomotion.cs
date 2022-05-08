@@ -1,15 +1,15 @@
-using System;
 using UnityEngine;
 
 namespace SVell 
 {
 	public class PlayerLocomotion : MonoBehaviour
 	{
-		[Header("Stats")] 
+		[Header("Movement Stats")] 
 		[SerializeField] private float movementSpeed = 5f;
 		[SerializeField] private float sprintSpeed = 7f;
 		[SerializeField] private float rotationSpeed = 10f;
-		
+
+		private PlayerManager playerManager;
 		private InputHandler inputHandler;
 		private AnimatorHandler animatorHandler;
 		private new Rigidbody rigidbody;
@@ -21,10 +21,10 @@ namespace SVell
 
 		public Transform MyTransform => transform;
 		public Rigidbody Rigidbody => rigidbody;
-		public bool IsSprinting { get; set; }
 
 		private void Awake()
 		{
+			playerManager = GetComponent<PlayerManager>();
 			rigidbody = GetComponent<Rigidbody>();
 			inputHandler = GetComponent<InputHandler>();
 
@@ -32,16 +32,6 @@ namespace SVell
 			animatorHandler.Initialize();
 			
 			camera = Camera.main.transform;
-		}
-
-		public void Update()
-		{
-			float delta = Time.deltaTime;
-
-			IsSprinting = inputHandler.bInput;
-			inputHandler.TickInput(delta);
-			HandleMovement(delta);
-			HandleRollingAndSprint(delta);
 		}
 
 		#region Movement
@@ -73,7 +63,7 @@ namespace SVell
 			MyTransform.rotation = targetRotation;
 		}
 
-		private void HandleMovement(float delta)
+		public void HandleMovement(float delta)
 		{
 			if(inputHandler.RollFlag) return;
 			
@@ -87,7 +77,7 @@ namespace SVell
 			if (inputHandler.SprintFlag)
 			{
 				speed = sprintSpeed;
-				IsSprinting = true;
+				playerManager.IsSprinting = true;
 				moveDirection *= speed;
 			}
 			else
@@ -98,7 +88,8 @@ namespace SVell
 			Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
 			rigidbody.velocity = projectedVelocity;
 
-			animatorHandler.UpdateAnimatorValues(inputHandler.MoveAmount, 0, IsSprinting );
+			animatorHandler.UpdateAnimatorValues(inputHandler.MoveAmount, 0, 
+				playerManager.IsSprinting);
 
 			if (animatorHandler.CanRotate)
 			{
@@ -106,7 +97,7 @@ namespace SVell
 			}
 		}
 
-		private void HandleRollingAndSprint(float delta)
+		public void HandleRollingAndSprint(float delta)
 		{
 			if (animatorHandler.Animator.GetBool("IsInteracting")) return;
 

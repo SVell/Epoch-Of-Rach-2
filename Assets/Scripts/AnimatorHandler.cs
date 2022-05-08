@@ -5,9 +5,10 @@ namespace SVell
 	public class AnimatorHandler : MonoBehaviour
 	{
 		[SerializeField] private bool canRotate;
-		[SerializeField] private InputHandler inputHandler;
-		[SerializeField] private PlayerLocomotion playerLocomotion;
 
+		private PlayerManager playerManager;
+		private PlayerLocomotion playerLocomotion;
+		
 		private Animator animator;
 		
 		private int vertical;
@@ -18,31 +19,31 @@ namespace SVell
 
 		public void Initialize()
 		{
+			playerManager = GetComponentInParent<PlayerManager>();
 			animator = GetComponent<Animator>();
-			inputHandler = GetComponentInParent<InputHandler>();
 			playerLocomotion = GetComponentInParent<PlayerLocomotion>();
 			vertical = Animator.StringToHash("Vertical");
 			horizontal = Animator.StringToHash("Horizontal");
 		}
 
-		public void UpdateAnimatorValues(float vertiacalMovement, float horizontalMovement, bool isSprinting)
+		public void UpdateAnimatorValues(float verticalMovement, float horizontalMovement, bool isSprinting)
 		{
 			#region Vertical
 			float v = 0;
 
-			if (vertiacalMovement > 0 && vertiacalMovement <= 0.55f)
+			if (verticalMovement > 0 && verticalMovement <= 0.55f)
 			{
 				v = 0.5f;
 			}
-			else if (vertiacalMovement > 0.55f)
+			else if (verticalMovement > 0.55f)
 			{
 				v = 1;
 			}
-			else if (vertiacalMovement < 0 && vertiacalMovement > -0.55f)
+			else if (verticalMovement < 0 && verticalMovement > -0.55f)
 			{
 				v = -0.5f;
 			}
-			else if (vertiacalMovement < -0.55f)
+			else if (verticalMovement < -0.55f)
 			{
 				v = -1;
 			}
@@ -106,7 +107,7 @@ namespace SVell
 
 		private void OnAnimatorMove()
 		{
-			if(!inputHandler.IsInteracting) return;
+			if(!playerManager.IsInteracting) return;
 
 			float delta = Time.deltaTime;
 			playerLocomotion.Rigidbody.drag = 0;
